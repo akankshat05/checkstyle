@@ -7,7 +7,7 @@ package com.puppycrawl.tools.checkstyle.api.abstractcheck;
 // violation above
 
 /**
- * I'm a javadoc
+ * I'm a javadoc some change
  */
 public class InputAbstractCheckTestFileContents {
     private int variable;
