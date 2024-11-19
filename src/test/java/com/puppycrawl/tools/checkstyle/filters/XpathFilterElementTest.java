@@ -22,9 +22,11 @@ package com.puppycrawl.tools.checkstyle.filters;
 import static com.google.common.truth.Truth.assertWithMessage;
 
 import java.io.File;
+import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 import java.util.regex.Pattern;
 
+import com.puppycrawl.tools.checkstyle.utils.CommonUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -356,6 +358,19 @@ public class XpathFilterElementTest extends AbstractModuleTestSupport {
         assertWithMessage("Error: " + ev.getMessage())
                 .that(ev.isSuccessful())
                 .isTrue();
+    }
+
+    @Test
+    public void testCreatePatternFromChecks() throws Exception {
+        String checks = "checkPattern";
+        Pattern expectedPattern = CommonUtil.createPattern(checks);
+        XpathFilterElement element = new XpathFilterElement("files", checks, "message", "moduleId", "query");
+        Field checkRegexpField = XpathFilterElement.class.getDeclaredField("checkRegexp");
+        checkRegexpField.setAccessible(true);
+        Pattern actualPattern = (Pattern) checkRegexpField.get(element);
+        assertWithMessage("Expected checks pattern to be created correctly for the string: " + checks)
+                .that(actualPattern.pattern())
+                .isEqualTo(expectedPattern.pattern());
     }
 
     private TreeWalkerAuditEvent getEvent(int line, int column, int tokenType)
